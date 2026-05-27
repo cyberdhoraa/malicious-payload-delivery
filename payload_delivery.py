@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import filedialog
 import webbrowser
+import sys
 
 class PayloadDeliveryApp(tk.Tk):
     def __init__(self):
@@ -15,23 +16,39 @@ class PayloadDeliveryApp(tk.Tk):
         tk.Button(self, text="YouTube Link", command=self.open_youtube).pack()
 
     def send_apk(self):
-        file_path = filedialog.askopenfilename(filetypes=[("APK Files", "*.apk")])
-        if file_path:
-            print(f"Sending APK: {file_path}")
+        try:
+            file_path = filedialog.askopenfilename(filetypes=[("APK Files", "*.apk")])
+            if file_path:
+                print(f"Sending APK: {file_path}")
+        except Exception as e:
+            print(f"Error sending APK: {e}")
 
     def send_pdf(self):
-        file_path = filedialog.askopenfilename(filetypes=[("PDF Files", "*.pdf")])
-        if file_path:
-            print(f"Sending PDF: {file_path}")
+        try:
+            file_path = filedialog.askopenfilename(filetypes=[("PDF Files", "*.pdf")])
+            if file_path:
+                print(f"Sending PDF: {file_path}")
+        except Exception as e:
+            print(f"Error sending PDF: {e}")
 
     def send_image(self):
-        file_path = filedialog.askopenfilename(filetypes=[("Image Files", "*.png *.jpg")])
-        if file_path:
-            print(f"Sending Image: {file_path}")
+        try:
+            file_path = filedialog.askopenfilename(filetypes=[("Image Files", "*.png *.jpg")])
+            if file_path:
+                print(f"Sending Image: {file_path}")
+        except Exception as e:
+            print(f"Error sending Image: {e}")
 
     def open_youtube(self):
-        webbrowser.open("https://www.youtube.com/watch?v=malicious_video")
+        try:
+            webbrowser.open("https://www.youtube.com/watch?v=malicious_video")
+        except Exception as e:
+            print(f"Error opening YouTube: {e}")
 
 if __name__ == "__main__":
-    app = PayloadDeliveryApp()
-    app.mainloop()
+    try:
+        app = PayloadDeliveryApp()
+        app.mainloop()
+    except KeyboardInterrupt:
+        print("\nExiting...")
+        sys.exit(0)
