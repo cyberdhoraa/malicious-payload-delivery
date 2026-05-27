@@ -1,0 +1,2 @@
+# Generate image
+exiftool -Comment="payload" image.png
