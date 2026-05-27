@@ -1,73 +1,55 @@
 import tkinter as tk
 from tkinter import filedialog
 import webbrowser
+import requests
+from PIL import Image, ImageTk
+import io
 
 class CyberDhoraApp(tk.Tk):
     def __init__(self):
         super().__init__()
         self.title("CyberDhora - Digital Investigation Toolkit")
-        self.geometry("400x300")
-        self.configure(bg="#1a1a2e")  # Dark blue background
+        self.geometry("500x400")
+        self.configure(bg="#1a1a2e")
         
-        # Title label
+        # Load logo
+        self.logo = self.load_logo()
+        
+        # Title with logo
+        title_frame = tk.Frame(self, bg="#1a1a2e")
+        title_frame.pack(pady=10)
+        
+        logo_label = tk.Label(title_frame, image=self.logo, bg="#1a1a2e")
+        logo_label.pack(side=tk.LEFT, padx=10)
+        
         title_label = tk.Label(
-            self, 
+            title_frame,
             text="CyberDhora Investigation Portal",
             bg="#1a1a2e",
             fg="#00eeff",
             font=("Arial", 16, "bold")
         )
-        title_label.pack(pady=20)
-
-        # Frame for buttons
-        button_frame = tk.Frame(self, bg="#1a1a2e")
-        button_frame.pack(pady=20)
-
-        # Buttons with CyberDhora branding
-        tk.Button(
-            button_frame,
-            text="APK Exploit",
-            command=self.send_apk,
-            width=15,
-            height=2,
-            bg="#4a4a8a",
-            fg="white",
-            activebackground="#6a6aaa"
-        ).pack(pady=10)
-
-        tk.Button(
-            button_frame,
-            text="PDF Malware",
-            command=self.send_pdf,
-            width=15,
-            height=2,
-            bg="#4a4a8a",
-            fg="white",
-            activebackground="#6a6aaa"
-        ).pack(pady=10)
-
-        tk.Button(
-            button_frame,
-            text="Image Payload",
-            command=self.send_image,
-            width=15,
-            height=2,
-            bg="#4a4a8a",
-            fg="white",
-            activebackground="#6a6aaa"
-        ).pack(pady=10)
-
-        tk.Button(
-            button_frame,
-            text="YouTube Attack",
-            command=self.open_youtube,
-            width=15,
-            height=2,
-            bg="#4a4a8a",
-            fg="white",
-            activebackground="#6a6aaa"
-        ).pack(pady=10)
-
+        title_label.pack(side=tk.LEFT)
+        
+        # Main frame
+        main_frame = tk.Frame(self, bg="#1a1a2e")
+        main_frame.pack(expand=True, fill=tk.BOTH, padx=20, pady=20)
+        
+        # Buttons with CyberDhora styling
+        button_style = {
+            "width": 20,
+            "height": 2,
+            "bg": "#4a4a8a",
+            "fg": "white",
+            "activebackground": "#6a6aaa",
+            "font": ("Arial", 10)
+        }
+        
+        tk.Button(main_frame, text="APK Exploit", command=self.send_apk, **button_style).pack(pady=10)
+        tk.Button(main_frame, text="PDF Malware", command=self.send_pdf, **button_style).pack(pady=10)
+        tk.Button(main_frame, text="Image Payload", command=self.send_image, **button_style).pack(pady=10)
+        tk.Button(main_frame, text="YouTube Attack", command=self.open_youtube, **button_style).pack(pady=10)
+        
         # Status bar
         self.status_var = tk.StringVar()
         self.status_var.set("Ready for investigation...")
@@ -82,27 +64,58 @@ class CyberDhoraApp(tk.Tk):
         )
         status_bar.pack(side=tk.BOTTOM, fill=tk.X)
 
+    def load_logo(self):
+        try:
+            # Try to load local logo
+            logo = Image.open("cyberdhora_logo.png")
+            logo = logo.resize((50, 50))
+            return ImageTk.PhotoImage(logo)
+        except:
+            # Fallback to text logo
+            return None
+
     def send_apk(self):
         file_path = filedialog.askopenfilename(filetypes=[("APK Files", "*.apk")])
         if file_path:
             self.status_var.set(f"APK Sent: {file_path}")
-            print(f"Sending APK: {file_path}")
+            # Add custom delivery logic here
+            self.deliver_payload(file_path, "APK")
 
     def send_pdf(self):
         file_path = filedialog.askopenfilename(filetypes=[("PDF Files", "*.pdf")])
         if file_path:
             self.status_var.set(f"PDF Sent: {file_path}")
-            print(f"Sending PDF: {file_path}")
+            self.deliver_payload(file_path, "PDF")
 
     def send_image(self):
         file_path = filedialog.askopenfilename(filetypes=[("Image Files", "*.png *.jpg")])
         if file_path:
             self.status_var.set(f"Image Sent: {file_path}")
-            print(f"Sending Image: {file_path}")
+            self.deliver_payload(file_path, "Image")
+
+    def deliver_payload(self, file_path, payload_type):
+        # Implement custom delivery method here
+        try:
+            with open(file_path, 'rb') as f:
+                files = {'file': (file_path.split('/')[-1], f)}
+                response = requests.post(
+                    "https://your-delivery-server.com/api/upload",
+                    files=files,
+                    data={"type": payload_type}
+                )
+                if response.status_code == 200:
+                    self.status_var.set(f"{payload_type} delivered successfully!")
+                else:
+                    self.status_var.set(f"Delivery failed: {response.text}")
+        except Exception as e:
+            self.status_var.set(f"Error: {str(e)}")
 
     def open_youtube(self):
-        webbrowser.open("https://www.youtube.com/watch?v=malicious_video")
-        self.status_var.set("YouTube attack launched!")
+        try:
+            webbrowser.open("https://www.youtube.com/watch?v=malicious_video")
+            self.status_var.set("YouTube attack launched!")
+        except Exception as e:
+            self.status_var.set(f"Error: {str(e)}")
 
 if __name__ == "__main__":
     app = CyberDhoraApp()
