@@ -1,4 +1,2 @@
-tkinter==0.1.0
 requests==2.28.1
-webbrowser==1.0.0
 Pillow>=9.0.0
